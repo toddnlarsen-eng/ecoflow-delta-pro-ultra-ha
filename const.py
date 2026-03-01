@@ -63,6 +63,9 @@ ATTR_DISCHARGE_LOWER_LIMIT = "discharge_lower_limit"
 # System
 ATTR_STATUS = "status"
 
+# Dispatcher signal for state updates
+SIGNAL_UPDATE = f"{DOMAIN}_update"
+
 # Sensor definitions: (key, name, unit, device_class, state_class, icon)
 SENSOR_DEFINITIONS = [
     (ATTR_BATTERY_SOC, "Battery Level", "%", "battery", "measurement", None),

@@ -6,7 +6,8 @@
   "issue_tracker": "https://github.com/yourusername/ecoflow-delta-pro-ultra-ha/issues",
   "requirements": ["paho-mqtt>=1.6.1"],
   "dependencies": [],
-  "codeowners": [],
+  "codeowners": ["@yourusername"],
   "iot_class": "cloud_push",
-  "config_flow": true
+  "config_flow": true,
+  "homeassistant": "2023.8.0"
 }

@@ -1,24 +1,13 @@
 # EcoFlow Delta Pro Ultra — Home Assistant Integration
 
-A custom component for Home Assistant that integrates the **EcoFlow Delta Pro Ultra** battery system via the official EcoFlow Open API (MQTT + REST).
+[![HACS Default](https://img.shields.io/badge/HACS-Default-41BDF5.svg)](https://github.com/hacs/integration)
+[![GitHub Release](https://img.shields.io/github/v/release/yourusername/ecoflow-delta-pro-ultra-ha)](https://github.com/yourusername/ecoflow-delta-pro-ultra-ha/releases)
+[![HA Minimum Version](https://img.shields.io/badge/Home%20Assistant-2023.8%2B-blue)](https://www.home-assistant.io)
+[![HACS Validation](https://github.com/yourusername/ecoflow-delta-pro-ultra-ha/actions/workflows/hacs.yml/badge.svg)](https://github.com/yourusername/ecoflow-delta-pro-ultra-ha/actions/workflows/hacs.yml)
+[![Hassfest](https://github.com/yourusername/ecoflow-delta-pro-ultra-ha/actions/workflows/hassfest.yml/badge.svg)](https://github.com/yourusername/ecoflow-delta-pro-ultra-ha/actions/workflows/hassfest.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
----
-
-## Features
-
-| Category | Entities |
-|---|---|
-| **Sensors** | Battery SOC, Capacity, Voltage, Current, Temperature, Cycles, Remaining Time, AC/DC/USB/Solar/Grid power & voltage/current metrics |
-| **Switches** | AC Output, DC Output, EPS (Emergency Power Supply) Mode |
-| **Numbers (sliders)** | AC Charging Power Limit, Backup Reserve Level, Charge Upper Limit, Discharge Lower Limit |
-
----
-
-## Prerequisites
-
-1. An **EcoFlow Developer Account** — sign up at [developer.ecoflow.com](https://developer.ecoflow.com)
-2. An **Access Key** and **Secret Key** from the EcoFlow Developer Portal
-3. Your **device serial number (SN)** — found in the EcoFlow app under device settings
+Integrate your **EcoFlow Delta Pro Ultra** battery system into Home Assistant with real-time monitoring and full control — powered by the official [EcoFlow Open API](https://developer.ecoflow.com) via MQTT + REST.
 
 ---
 
@@ -26,94 +15,78 @@ A custom component for Home Assistant that integrates the **EcoFlow Delta Pro Ul
 
 ### Via HACS (recommended)
 
-1. In HACS, go to **Integrations → Custom Repositories**
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=yourusername&repository=ecoflow-delta-pro-ultra-ha&category=integration)
+
+1. Click the badge above, or in HACS go to **Integrations → ⋮ → Custom Repositories**
 2. Add `https://github.com/yourusername/ecoflow-delta-pro-ultra-ha` as an **Integration**
-3. Install **EcoFlow Delta Pro Ultra**
-4. Restart Home Assistant
+3. Search for **EcoFlow Delta Pro Ultra** and install it
+4. **Restart Home Assistant**
 
 ### Manual
 
-1. Copy the `custom_components/ecoflow_delta_pro_ultra` folder into your HA `config/custom_components/` directory
-2. Restart Home Assistant
+1. Download the [latest release](https://github.com/yourusername/ecoflow-delta-pro-ultra-ha/releases/latest) zip
+2. Extract `ecoflow_delta_pro_ultra` into your HA `config/custom_components/` directory
+3. **Restart Home Assistant**
 
 ---
 
 ## Configuration
 
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=ecoflow_delta_pro_ultra)
+
 1. Go to **Settings → Devices & Services → Add Integration**
 2. Search for **EcoFlow Delta Pro Ultra**
-3. Enter your **Access Key**, **Secret Key**, and **Device Serial Number**
-4. Click **Submit**
+3. Enter your credentials:
 
-The integration will validate your credentials, then start an MQTT connection to the EcoFlow cloud broker.
-
----
-
-## Architecture
-
-```
-Home Assistant
-    └── ConfigEntry
-        ├── EcoFlowMQTTClient  (paho-mqtt, TLS, cloud push)
-        │     ├── Subscribes: /app/device/property/get/{sn}
-        │     └── Publishes:  /app/{uid}/device/property/set/{sn}
-        ├── EcoFlowDataHolder  (in-memory state cache)
-        └── Platforms
-              ├── sensor.py    (25 read-only sensors)
-              ├── switch.py    (3 on/off controls)
-              └── number.py    (4 numeric sliders)
-```
-
-### Data flow
-
-1. On connect, the client requests a full quota snapshot.
-2. EcoFlow pushes real-time updates via MQTT whenever values change.
-3. A periodic fallback poll (every 30 s) re-requests the full quota in case any push was missed.
-4. All entities listen for the `ecoflow_delta_pro_ultra_update_<entry_id>` HA dispatcher signal and refresh their state.
+| Field | Where to find it |
+|---|---|
+| **Access Key** | [EcoFlow Developer Portal](https://developer.ecoflow.com) → API Keys |
+| **Secret Key** | [EcoFlow Developer Portal](https://developer.ecoflow.com) → API Keys |
+| **Device SN** | EcoFlow app → Device → Settings → Device Info |
 
 ---
 
-## Entities Reference
+## Features
 
-### Sensors
+### 📊 Sensors (25)
 
-| Entity | Unit | Notes |
+| Entity | Unit | Device Class |
 |---|---|---|
-| Battery Level | % | Main SoC display value |
-| Battery Capacity | Wh | Full capacity |
-| Battery Voltage | V | Min cell voltage |
-| Battery Current | A | |
-| Battery Temperature | °C | Max cell temp |
-| Battery Cycles | — | Charge cycles |
-| Battery Remain Time | min | Charge or discharge remaining |
-| Total Input Power | W | Sum of all inputs |
-| Total Output Power | W | Sum of all outputs |
-| AC Input Power | W | Shore / grid charging |
-| AC Input Voltage | V | |
-| AC Input Frequency | Hz | |
-| AC Output Power | W | Load on AC inverter |
-| AC Output Voltage | V | |
-| AC Charging Power | W | Current AC charge rate |
-| DC Output Power | W | Car port / 12 V DC |
-| USB Output Power | W | USB-A |
-| USB-C Output Power | W | |
-| Solar Input Power | W | MPPT combined |
-| Solar Input Voltage | V | |
-| Solar Input Current | A | |
-| Grid Input Power | W | Grid-tied input |
-| Backup Reserve Level | % | Minimum SoC held for backup |
-| Charge Upper Limit | % | Max charge target |
-| Discharge Lower Limit | % | Min discharge cutoff |
+| Battery Level | % | battery |
+| Battery Capacity | Wh | energy_storage |
+| Battery Voltage | V | voltage |
+| Battery Current | A | current |
+| Battery Temperature | °C | temperature |
+| Battery Cycles | — | — |
+| Battery Remain Time | min | — |
+| Total Input Power | W | power |
+| Total Output Power | W | power |
+| AC Input Power | W | power |
+| AC Input Voltage | V | voltage |
+| AC Input Frequency | Hz | frequency |
+| AC Output Power | W | power |
+| AC Output Voltage | V | voltage |
+| AC Charging Power | W | power |
+| DC Output Power | W | power |
+| USB Output Power | W | power |
+| USB-C Output Power | W | power |
+| Solar Input Power | W | power |
+| Solar Input Voltage | V | voltage |
+| Solar Input Current | A | current |
+| Grid Input Power | W | power |
+| Backup Reserve Level | % | battery |
+| Charge Upper Limit | % | battery |
+| Discharge Lower Limit | % | battery |
 
-### Switches
+### 🔌 Switches (3)
 
 | Entity | Description |
 |---|---|
-| AC Output | Enable / disable AC inverter output |
-| DC Output | Enable / disable 12 V DC / car port |
+| AC Output | Enable / disable the AC inverter output |
+| DC Output | Enable / disable the 12 V car port |
 | EPS Mode | Enable / disable Emergency Power Supply (UPS) mode |
 
-### Numbers (sliders)
+### 🎚️ Number Sliders (4)
 
 | Entity | Range | Step |
 |---|---|---|
@@ -124,17 +97,64 @@ Home Assistant
 
 ---
 
+## Architecture
+
+```
+Home Assistant
+└── ConfigEntry
+    ├── EcoFlowMQTTClient  (paho-mqtt, TLS 8883, cloud push)
+    │     ├── Subscribe: /app/device/property/get/{sn}
+    │     └── Publish:   /app/{uid}/device/property/set/{sn}
+    ├── EcoFlowDataHolder  (in-memory state cache)
+    └── Platforms
+          ├── sensor.py    (25 read-only sensors)
+          ├── switch.py    (3 on/off controls)
+          └── number.py    (4 numeric sliders)
+```
+
+Data flows in real-time via MQTT push. A 30-second fallback poll re-requests the full quota in case any message is missed.
+
+---
+
+## Requirements
+
+- Home Assistant **2023.8.0** or newer
+- Outbound TCP to `mqtt.ecoflow.com:8883` (TLS)
+- Outbound HTTPS to `api.ecoflow.com` (setup/validation only)
+- Free [EcoFlow Developer Account](https://developer.ecoflow.com)
+
+---
+
 ## Troubleshooting
 
-| Problem | Solution |
+| Symptom | Fix |
 |---|---|
-| All sensors show "unavailable" | Check MQTT connectivity — port 8883 must be reachable outbound |
-| `invalid_auth` during setup | Verify Access Key / Secret Key in EcoFlow Developer Portal |
-| Values not updating | Check HA logs for MQTT disconnect messages; the 30 s poll should recover automatically |
-| `paho-mqtt` not found | Restart HA after installation; the requirement is auto-installed |
+| All sensors show "unavailable" | Ensure port 8883 outbound is not blocked by your firewall |
+| `invalid_auth` during setup | Re-generate API keys in the EcoFlow Developer Portal |
+| Values stuck / not updating | Check HA logs for MQTT disconnect; the 30 s poll recovers automatically |
+| `paho-mqtt` missing | Fully restart HA after install — the requirement installs on first boot |
+
+Enable debug logging by adding to `configuration.yaml`:
+
+```yaml
+logger:
+  default: warning
+  logs:
+    custom_components.ecoflow_delta_pro_ultra: debug
+```
+
+---
+
+## Contributing
+
+Pull requests are welcome! Please open an issue first to discuss significant changes.
+
+1. Fork the repo
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Commit your changes and open a PR against `main`
 
 ---
 
 ## License
 
-MIT
+[MIT](LICENSE)

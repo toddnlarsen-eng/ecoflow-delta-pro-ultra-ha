@@ -17,13 +17,13 @@ from .const import (
     CONF_DEVICE_SN,
     DOMAIN,
     UPDATE_INTERVAL,
+    SIGNAL_UPDATE,
 )
 from .ecoflow_client import EcoFlowDataHolder, EcoFlowMQTTClient
 
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = [Platform.SENSOR, Platform.SWITCH, Platform.NUMBER]
-SIGNAL_UPDATE = f"{DOMAIN}_update"
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
