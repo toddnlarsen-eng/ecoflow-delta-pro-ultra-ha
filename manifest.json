@@ -1,0 +1,12 @@
+{
+  "domain": "ecoflow_delta_pro_ultra",
+  "name": "EcoFlow Delta Pro Ultra",
+  "version": "1.0.0",
+  "documentation": "https://github.com/yourusername/ecoflow-delta-pro-ultra-ha",
+  "issue_tracker": "https://github.com/yourusername/ecoflow-delta-pro-ultra-ha/issues",
+  "requirements": ["paho-mqtt>=1.6.1"],
+  "dependencies": [],
+  "codeowners": [],
+  "iot_class": "cloud_push",
+  "config_flow": true
+}
